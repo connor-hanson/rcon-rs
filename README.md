@@ -6,6 +6,7 @@ This client was developed with Factorio in mind.
 If you notice that the client works with games besides Factorio, please raise a PR to document this. 
 
 ## Supported Games
+| Title | 
 |---|
 |Factorio|
 
