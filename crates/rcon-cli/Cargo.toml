@@ -2,10 +2,12 @@
 name = "rcon-cli"
 version = "0.1.0"
 edition = "2024"
+license = "MIT"
+description = "Run a RCON client from CLI"
 
 [dependencies]
 clap = { version = "4.5.58", features=["derive"]}
 env_logger = "0.11.9"
 log = "0.4.29"
-rcon_rs = { path = "../rcon-rs" }
+rcon-tokio = "*"
 tokio = { version = "1.49.0", features=["full"] }

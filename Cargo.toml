@@ -1,6 +1,6 @@
 [workspace]
 members = [
-    "crates/rcon-rs", 
+    "crates/rcon-tokio", 
     "crates/rcon-cli",
 ]
 resolver = "2"

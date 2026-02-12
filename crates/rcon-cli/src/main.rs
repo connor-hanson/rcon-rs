@@ -8,8 +8,8 @@ use tokio::net::TcpStream;
 use env_logger::Env;
 use log;
 
-use rcon_rs::RconClient;
-use rcon_rs::errors::RconError;
+use rcon_tokio::RconClient;
+use rcon_tokio::errors::RconError;
 
 #[derive(Parser)]
 struct Args {

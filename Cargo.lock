@@ -307,13 +307,25 @@ dependencies = [
  "clap",
  "env_logger",
  "log",
- "rcon_rs",
+ "rcon-tokio 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "tokio",
 ]
 
 [[package]]
-name = "rcon_rs"
-version = "0.1.0"
+name = "rcon-tokio"
+version = "0.1.1"
+dependencies = [
+ "env_logger",
+ "log",
+ "thiserror",
+ "tokio",
+]
+
+[[package]]
+name = "rcon-tokio"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "97a281b3a9afd07d6a1c836e75f6244bb76eb1545ba31ea2507a126294e9ee4e"
 dependencies = [
  "env_logger",
  "log",

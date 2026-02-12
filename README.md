@@ -16,5 +16,5 @@ The package has two modes:
 1) Library
 2) CLI
 
-To use the CLI interface, simply run `rcon-rs --address <ip_addr> --port <port> --password <pw>`
-You may also run the commands as a one-shot: `rcon-rs --address <ip_addr> --port <port> --password <pw> -c <command_str>`
+To use the CLI interface, simply run `rcon-cli --address <ip_addr> --port <port> --password <pw>`
+You may also run the commands as a one-shot: `rcon-cli --address <ip_addr> --port <port> --password <pw> -c <command_str>`
