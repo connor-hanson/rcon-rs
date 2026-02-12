@@ -1,8 +1,3 @@
-mod common;
-mod packet;
-mod errors;
-mod client;
-
 use std::io::Write;
 
 use clap::Parser;
@@ -13,17 +8,14 @@ use tokio::net::TcpStream;
 use env_logger::Env;
 use log;
 
-use crate::{client::RconClient, errors::RconError};
+use rcon_rs::RconClient;
+use rcon_rs::errors::RconError;
 
 #[derive(Parser)]
 struct Args {
-    /// Server Address (eg: 127.0.0.1, or localhost)
+    /// Server Address (eg: 127.0.0.1:27015, or localhost)
     #[arg(short, long)]
     address: String,
-
-    /// Server port (eg: 27015, forming localhost:27015)
-    #[arg(short, long)]
-    port: u32,
 
     /// Server password
     #[arg(short, long)]
@@ -67,7 +59,7 @@ async fn main() -> Result<(), RconError> {
     ).init();
 
     let mut client = RconClient::connect(
-        format!("{}:{}", &args.address, &args.port)).await?;
+        format!("{}", &args.address)).await?;
     client.auth(&args.password).await?;
 
     if args.command.is_some() {

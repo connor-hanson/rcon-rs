@@ -1,0 +1,12 @@
+[package]
+name = "rcon-rs"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+description = "Rust client implementation of Valve's RCON protocol" 
+
+[dependencies]
+env_logger = "0.11.9"
+log = "0.4.29"
+thiserror = "2.0.18"
+tokio = { version = "1.49.0", features=["full"] }

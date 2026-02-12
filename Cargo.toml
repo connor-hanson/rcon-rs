@@ -1,13 +1,6 @@
-[package]
-name = "rcon-rs"
-version = "0.1.0"
-edition = "2024"
-
-[dependencies]
-anyhow = "1.0.101"
-clap = { version = "4.5.58", features=["derive"]}
-env_logger = "0.11.9"
-log = "0.4.29"
-proptest = "1.10.0"
-thiserror = "2.0.18"
-tokio = { version = "1.49.0", features=["full"] }
+[workspace]
+members = [
+    "crates/rcon-rs", 
+    "crates/rcon-cli",
+]
+resolver = "2"
