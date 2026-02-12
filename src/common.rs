@@ -1,9 +1,9 @@
 #[derive(Debug, PartialEq, Clone)]
 pub enum PacketType {
-    ServerDataAuth,
+    ServerDataResponseValue,
     ServerDataAuthResponse,
     ServerDataExecCommand,
-    ServerDataResponseValue
+    ServerDataAuth,
 }
 
 impl Into<i32> for PacketType {
