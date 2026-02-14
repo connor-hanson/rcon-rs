@@ -113,6 +113,7 @@ impl<S: AsyncRead + AsyncWrite + Unpin> RconClient<S> {
                     data_seen = true;
                     let ptype: i32 = pkt.packet_type.into();
                     match ptype {
+                        0 => out.push_str(&pkt.body),
                         2 => out.push_str(&pkt.body),
                         _ => ()
                     }
