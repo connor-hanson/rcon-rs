@@ -3,7 +3,15 @@ name = "rcon-cli"
 version = "0.1.0"
 edition = "2024"
 license = "MIT"
-description = "Run a RCON client from CLI"
+description = "A RCON client library and CLI for game server administration"
+keywords = ["cli", "rcon", "gaming", "utility", "networking"]
+categories = ["command-line-utilities", "network-programming", "game-development"]
+repository = "https://github.com/connor-hanson/rcon-rs"
+documentation = "https://docs.rs/rcon-cli"
+readme = "./README.md"
+
+[package.metadata.docs.rs]
+all-features = true
 
 [dependencies]
 clap = { version = "4.5.58", features=["derive"]}
