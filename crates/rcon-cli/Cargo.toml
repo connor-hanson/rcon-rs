@@ -1,6 +1,6 @@
 [package]
 name = "rcon-cli"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 license = "MIT"
 description = "A RCON client library and CLI for game server administration"
@@ -17,7 +17,7 @@ all-features = true
 clap = { version = "4.5.58", features=["derive"]}
 env_logger = "0.11.9"
 log = "0.4.29"
-rcon-tokio = "0.1.1"
+rcon-tokio = { version = "0.1.1", path = "../rcon-tokio" }
 rpassword = "7.4.0"
 rustyline = { version = "17.0.2", features=["with-file-history"]}
 serde = { version = "1.0.228", features=["derive"] }

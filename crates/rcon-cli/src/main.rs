@@ -29,7 +29,8 @@ struct Args {
     #[arg(short, long)]
     command: Option<String>,
 
-    show_responses: Option<bool>,
+    #[arg(long, action = clap::ArgAction::SetTrue)]
+    show_responses: bool,
     
     /// Config name to load from RCON_CONFIG_PATH
     #[arg(long)]
@@ -128,7 +129,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         println!("{}", response);
         return Ok(())
     } else {
-        run_cli(client, args.show_responses.is_some_and(|x| x)).await?;
+        run_cli(client, args.show_responses).await?;
     }
     Ok(())
 }

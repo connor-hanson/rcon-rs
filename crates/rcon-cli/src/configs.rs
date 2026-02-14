@@ -123,8 +123,7 @@ mod tests {
         let config_content = r#"{
             "configs": {
                 "default": {
-                    "host": "localhost",
-                    "port": 25575,
+                    "host": "localhost:27575",
                     "password": "admin"
                 }
             }
