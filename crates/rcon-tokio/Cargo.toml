@@ -4,6 +4,14 @@ version = "0.1.1"
 edition = "2024"
 license = "MIT"
 description = "Rust client implementation of Valve's RCON protocol" 
+keywords = ["lib", "rcon", "gaming", "utility", "networking"]
+categories = ["utility", "network-programming", "game-development"]
+repository = "https://github.com/connor-hanson/rcon-rs"
+documentation = "https://docs.rs/rcon-tokio"
+readme = "./README.md"
+
+[package.metadata.docs.rs]
+all-features = true
 
 [dependencies]
 env_logger = "0.11.9"
