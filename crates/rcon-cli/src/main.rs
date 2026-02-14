@@ -10,7 +10,10 @@ use rustyline::error::ReadlineError;
 use rustyline::DefaultEditor;
 
 use rcon_tokio::RconClient;
-use rcon_tokio::errors::RconError;
+
+mod configs;
+use crate::configs::load_config_from_env;
+use crate::configs::ServerConfig;
 
 #[derive(Parser)]
 struct Args {
@@ -27,6 +30,10 @@ struct Args {
     command: Option<String>,
 
     show_responses: Option<bool>,
+    
+    /// Config name to load from RCON_CONFIG_PATH
+    #[arg(long)]
+    config_name: Option<String>,
 }
 
 async fn run_cli(mut client: RconClient<TcpStream>, show_responses: bool) -> rustyline::Result<()> {
@@ -88,24 +95,32 @@ fn get_password(provided_pw: &Option<String>) -> String {
     read_password().unwrap()
 }
 
-async fn get_authenticated_client(args: &Args) -> Result<RconClient<TcpStream>, RconError> {
-    let address = get_address(&args.address);
-    let password = get_password(&args.password);
-
-    let mut client = RconClient::connect(format!("{}", &address)).await?;
-    client.auth(&password).await?;
-    Ok(client)
-}
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
-
     env_logger::Builder::from_env(
         Env::default().filter_or("RUST_LOG", "info")
     ).init();
 
-    let mut client = get_authenticated_client(&args).await?;
+    let searched_cfg = if args.config_name.is_some() {
+        log::debug!("Config name provided: {}", args.config_name.clone().unwrap());
+        load_config_from_env(args.config_name)
+    } else {
+        log::debug!("No config name provided.");
+        None
+    };
+
+    let server_config = if searched_cfg.is_some() {
+        searched_cfg.unwrap()
+    } else {
+        ServerConfig {
+            host: get_address(&args.address),
+            password: get_password(&args.password),
+        }
+    };
+
+    let mut client = RconClient::connect(format!("{}", &server_config.host)).await?;
+    client.auth(&server_config.password).await?;
 
     if args.command.is_some() {
         let cmd = args.command.unwrap();

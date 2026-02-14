@@ -1,0 +1,8 @@
+{
+    "configs": {
+        "test_profile": {
+            "host": "localhost:27015",
+            "password": "dev"
+        }
+    }
+}

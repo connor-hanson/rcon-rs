@@ -12,4 +12,10 @@ log = "0.4.29"
 rcon-tokio = "0.1.1"
 rpassword = "7.4.0"
 rustyline = { version = "17.0.2", features=["with-file-history"]}
+serde = { version = "1.0.228", features=["derive"] }
+serde_json = "1.0.149"
+tempfile = "3"
 tokio = { version = "1.49.0", features=["full"] }
+
+[dev-dependencies]
+tempfile = "3"

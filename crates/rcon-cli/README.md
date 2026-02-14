@@ -29,10 +29,53 @@ cargo install --path .
 
 - **Interactive Mode** - Connect once and run multiple commands in a persistent session
 - **One-Shot Mode** - Execute single commands and exit
+- **Config File Support** - Store server credentials in a JSON file for easy access
 - **Lightweight** - Minimal dependencies and fast execution
 - **Cross-Platform** - Works on macOS, Linux, and Windows
 
 ## Usage
+
+### Configuration File
+
+Store server credentials in a JSON config file to avoid typing them repeatedly.
+
+#### Example Config File
+
+Create a file (e.g., `~/.rcon-config.json`):
+
+```json
+{
+  "configs": {
+    "production": {
+      "host": "192.168.1.100:27015",
+      "password": "prod_password"
+    },
+    "staging": {
+      "host": "192.168.1.101:27015",
+      "password": "staging_password"
+    },
+    "local": {
+      "host": "127.0.0.1:27015",
+      "password": "dev_password"
+    }
+  }
+}
+```
+
+#### Set Environment Variable
+
+Point to your config file:
+
+```bash
+export RCON_CONFIG_PATH=~/.rcon-config.json
+```
+
+#### Using Configs
+```bash
+rcon-cli --config-name custom_config_profile
+```
+
+This loads the host and password from your config file, so you don't need to pass `--address` or `--password` flags.
 
 ### Interactive Mode
 
