@@ -35,7 +35,41 @@ cargo install --path .
 
 ## Usage
 
-### Configuration File
+### Interactive Mode
+
+Connect to a server and run commands interactively:
+
+```bach
+> rcon-cli
+Enter address: <your_server_address>:<your_server_port>
+Enter password: <your_server_password>
+[2026-02-14T01:13:27Z INFO  rcon_cli] Connected!
+> <enter command>
+```
+
+```bash
+rcon-cli --address <ip_addr> --port <port> --password <password> --show-responses
+```
+
+Example:
+```bash
+rcon-cli --address 127.0.0.1 --port 27015 --password mypassword
+```
+
+### One-Shot Mode
+
+Execute a single command and exit:
+
+```bash
+rcon-cli --address <ip_addr> --port <port> --password <password> -c <command>
+```
+
+Example:
+```bash
+rcon-cli --address 127.0.0.1 --port 27015 --password mypassword -c "/players"
+```
+
+### [Optional] Configuration File
 
 Store server credentials in a JSON config file to avoid typing them repeatedly.
 
@@ -76,37 +110,3 @@ rcon-cli --config-name custom_config_profile
 ```
 
 This loads the host and password from your config file, so you don't need to pass `--address` or `--password` flags.
-
-### Interactive Mode
-
-Connect to a server and run commands interactively:
-
-```bach
-> rcon-cli
-Enter address: <your_server_address>:<your_server_port>
-Enter password: <your_server_password>
-[2026-02-14T01:13:27Z INFO  rcon_cli] Connected!
-> <enter command>
-```
-
-```bash
-rcon-cli --address <ip_addr> --port <port> --password <password> --show-responses
-```
-
-Example:
-```bash
-rcon-cli --address 127.0.0.1 --port 27015 --password mypassword
-```
-
-### One-Shot Mode
-
-Execute a single command and exit:
-
-```bash
-rcon-cli --address <ip_addr> --port <port> --password <password> -c <command>
-```
-
-Example:
-```bash
-rcon-cli --address 127.0.0.1 --port 27015 --password mypassword -c "/players"
-```
