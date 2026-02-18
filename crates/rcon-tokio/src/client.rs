@@ -14,6 +14,7 @@ use crate::{common::PacketType, errors::RconError, packet::{Packet, build_packet
 
 const IDLE_TIMEOUT_MILLIS: u64 = 150;
 
+#[derive(Debug, Clone, Copy)]
 pub struct RconClient<S> {
     stream: S,
     next_id: i32,
