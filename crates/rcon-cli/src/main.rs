@@ -1,6 +1,7 @@
 use std::io::Write;
 
 use clap::Parser;
+use rcon_tokio::RconClientConfig;
 use tokio::net::TcpStream;
 
 use env_logger::Env;
@@ -17,12 +18,15 @@ use crate::configs::ServerConfig;
 
 #[derive(Parser)]
 struct Args {
-    /// Server Address (eg: 127.0.0.1:27015, or localhost)
+    /// Server Address (eg: 127.0.0.1, or localhost)
     #[arg(short, long)]
     address: Option<String>,
 
-    /// Server password
     #[arg(short, long)]
+    port: Option<u16>,
+
+    /// Server password
+    #[arg(long("pw"), long)]
     password: Option<String>,
 
     /// The command to execute. This can be any string
@@ -35,6 +39,9 @@ struct Args {
     /// Config name to load from RCON_CONFIG_PATH
     #[arg(long)]
     config_name: Option<String>,
+
+    #[arg(long, action = clap::ArgAction::SetTrue)]
+    auto_reconnect: bool,
 }
 
 async fn run_cli(mut client: RconClient<TcpStream>, show_responses: bool) -> rustyline::Result<()> {
@@ -51,7 +58,7 @@ async fn run_cli(mut client: RconClient<TcpStream>, show_responses: bool) -> rus
         match readline {
             Ok(line) => {
                 let _ = rl.add_history_entry(line.as_str());
-                let resp = client.exec(&line).await.unwrap_or_else(|e| format!("Error: {}", e));
+                let resp = client.execute(&line).await.unwrap_or_else(|e| format!("Error: {}", e));
                 
                 if show_responses {
                     log::info!("Response: {:?}", resp);
@@ -96,12 +103,25 @@ fn get_password(provided_pw: &Option<String>) -> String {
     read_password().unwrap()
 }
 
+fn get_port(provided_port: &Option<u16>) -> u16 {
+    if provided_port.is_some() {
+        return provided_port.clone().unwrap();
+    }
+    print!("Enter port: ");
+    std::io::stdout().flush().unwrap();
+    let mut input = String::new();
+    std::io::stdin().read_line(&mut input).unwrap();
+    input.trim().parse::<u16>().expect("Invalid port number")
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
     env_logger::Builder::from_env(
         Env::default().filter_or("RUST_LOG", "info")
-    ).init();
+    )
+    .filter_module("rustyline", log::LevelFilter::Warn)
+    .init();
 
     let searched_cfg = if args.config_name.is_some() {
         log::debug!("Config name provided: {}", args.config_name.clone().unwrap());
@@ -116,16 +136,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     } else {
         ServerConfig {
             host: get_address(&args.address),
+            port: get_port(&args.port),
             password: get_password(&args.password),
         }
     };
 
-    let mut client = RconClient::connect(format!("{}", &server_config.host)).await?;
-    client.auth(&server_config.password).await?;
+    let rcon_client_config = RconClientConfig::new(
+        server_config.host.clone(),
+        server_config.port.clone(),
+        server_config.password.clone(),
+    ).auto_reconnect(args.auto_reconnect);
+
+    let mut client = RconClient::connect(rcon_client_config).await?;
 
     if args.command.is_some() {
         let cmd = args.command.unwrap();
-        let response = client.exec(&cmd).await?;
+        let response = client.execute(&cmd).await?;
         println!("{}", response);
         return Ok(())
     } else {

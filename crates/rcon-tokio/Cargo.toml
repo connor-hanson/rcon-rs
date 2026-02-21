@@ -14,7 +14,6 @@ readme = "./README.md"
 all-features = true
 
 [dependencies]
-env_logger = "0.11.9"
 log = "0.4.29"
 thiserror = "2.0.18"
 tokio = { version = "1.49.0", features=["full"] }

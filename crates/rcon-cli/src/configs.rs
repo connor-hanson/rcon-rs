@@ -7,6 +7,7 @@ use serde_json;
 #[derive(Deserialize, Clone, Debug)]
 pub struct ServerConfig {
     pub host: String,
+    pub port: u16,
     pub password: String,
 }
 
@@ -99,11 +100,13 @@ mod tests {
         let config_content = r#"{
             "configs": {
                 "server1": {
-                    "host": "192.168.1.1:27015",
+                    "host": "192.168.1.1",
+                    "port": 27015,
                     "password": "password123"
                 },
                 "server2": {
-                    "host": "192.168.1.2:27016",
+                    "host": "192.168.1.2",
+                    "port": 27016,
                     "password": "password456"
                 }
             }
@@ -114,7 +117,8 @@ mod tests {
 
         assert!(result.is_some());
         let config = result.unwrap();
-        assert_eq!(config.host, "192.168.1.1:27015");
+        assert_eq!(config.host, "192.168.1.1");
+        assert_eq!(config.port, 27015);
         assert_eq!(config.password, "password123");
     }
 
@@ -123,7 +127,8 @@ mod tests {
         let config_content = r#"{
             "configs": {
                 "default": {
-                    "host": "localhost:27575",
+                    "host": "localhost",
+                    "port": 27575,
                     "password": "admin"
                 }
             }
@@ -134,7 +139,8 @@ mod tests {
 
         assert!(result.is_some());
         let config = result.unwrap();
-        assert_eq!(config.host, "localhost:27575");
+        assert_eq!(config.host, "localhost");
+        assert_eq!(config.port, 27575);
         assert_eq!(config.password, "admin");
     }
 
@@ -164,11 +170,13 @@ mod tests {
         let config_content = r#"{
             "configs": {
                 "server1": {
-                    "host": "192.168.1.1:27015",
+                    "host": "192.168.1.1",
+                    "port": 27015,
                     "password": "password123"
                 },
                 "server2": {
-                    "host": "192.168.1.2:27016",
+                    "host": "192.168.1.2",
+                    "port": 27016,
                     "password": "password456"
                 }
             }
@@ -213,7 +221,8 @@ mod tests {
     #[test]
     fn test_server_config_clone() {
         let config = ServerConfig {
-            host: "example.com:8080".to_string(),
+            host: "example.com".to_string(),
+            port: 8080,
             password: "secret".to_string(),
         };
 

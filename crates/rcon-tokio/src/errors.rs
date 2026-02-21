@@ -8,6 +8,9 @@ pub enum RconError {
     #[error("utf8 error: {0}")]
     Utf8(std::string::FromUtf8Error),
 
+    #[error("client error: {0}")]
+    ClientError(String),
+
     #[error("operation timed out")]
     Timeout,
 
