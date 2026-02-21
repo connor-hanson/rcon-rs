@@ -1,9 +1,31 @@
-use tokio::{io::{AsyncRead, AsyncWrite}, time::timeout};
+use tokio::{io::{AsyncRead, AsyncWrite}, net::TcpStream, time::timeout};
 
 use crate::{client::RconClient, common::PacketType, errors::RconError};
 
-impl<S: AsyncRead + AsyncWrite + Unpin> RconClient<S> {
+
+impl RconClient<TcpStream> {
     pub async fn execute(&mut self, command: &str) -> Result<String, RconError> {
+        for attempt in 0 ..=self.client_config.max_reconnect_attempts {
+            log::debug!("Executing command with attempt {}/{}", attempt + 1, self.client_config.max_reconnect_attempts);
+            match self._execute(command).await {
+                Ok(result) => return Ok(result),
+                Err(e) => log::warn!("Failed to execute command on attempt {}/{}. Error: {:?}", attempt + 1, self.client_config.max_reconnect_attempts, e),
+            }
+
+            if self.client_config.auto_reconnect && attempt < self.client_config.max_reconnect_attempts {
+                log::warn!("Attempting to reconnect client and retry command execution");
+                *self = RconClient::connect(self.client_config.clone()).await?;
+            } else {
+                break;
+            }
+        }
+
+        Err(RconError::ClientError(format!("Failed to execute command after {} attempts", self.client_config.max_reconnect_attempts)))
+    }
+}
+
+impl<S: AsyncRead + AsyncWrite + Unpin> RconClient<S> {
+    async fn _execute(&mut self, command: &str) -> Result<String, RconError> {
         log::debug!("Executing command: {:?}", command);
         let cmd_id = self.write_packet(PacketType::ServerDataExecCommand, command).await?;
 
@@ -85,7 +107,7 @@ mod tests {
             tokio::time::sleep(TIMEOUT * 2).await;
         });
 
-        let out = client.execute("cmd").await.unwrap();
+        let out = client._execute("cmd").await.unwrap();
         assert_eq!(out, "hello world");
         server.await.unwrap();
     }
@@ -117,7 +139,7 @@ mod tests {
             tokio::time::sleep(TIMEOUT * 2).await;
         });
 
-        let out = client.execute("cmd").await.unwrap();
+        let out = client._execute("cmd").await.unwrap();
         assert_eq!(out, "hello world");
         server.await.unwrap();
     }

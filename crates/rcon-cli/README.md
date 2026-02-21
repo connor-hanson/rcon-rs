@@ -32,6 +32,7 @@ cargo install --path .
 - **Config File Support** - Store server credentials in a JSON file for easy access
 - **Lightweight** - Minimal dependencies and fast execution
 - **Cross-Platform** - Works on macOS, Linux, and Windows
+- **Auto-Reconnection** - Automatically attempt server reconnection if server connection dies
 
 ## Usage
 
@@ -47,15 +48,18 @@ Create a file (e.g., `~/.rcon-config.json`):
 {
   "configs": {
     "production": {
-      "host": "192.168.1.100:27015",
+      "host": "192.168.1.100",
+      "port": 27015,
       "password": "prod_password"
     },
     "staging": {
-      "host": "192.168.1.101:27015",
+      "host": "192.168.1.101",
+      "port": 27015,
       "password": "staging_password"
     },
     "local": {
-      "host": "127.0.0.1:27015",
+      "host": "127.0.0.1",
+      "port": 27015,
       "password": "dev_password"
     }
   }
@@ -83,14 +87,15 @@ Connect to a server and run commands interactively:
 
 ```bach
 > rcon-cli
-Enter address: <your_server_address>:<your_server_port>
+Enter address: <your_server_address>
+Enter port: <your_server_port>
 Enter password: <your_server_password>
 [2026-02-14T01:13:27Z INFO  rcon_cli] Connected!
 > <enter command>
 ```
 
 ```bash
-rcon-cli --address <ip_addr> --port <port> --password <password> --show-responses
+rcon-cli --address <ip_addr> --port <port> --password <password> --show-responses --auto-reconnect
 ```
 
 Example:
