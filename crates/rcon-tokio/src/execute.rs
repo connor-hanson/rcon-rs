@@ -5,7 +5,30 @@ use crate::{client::RconClient, common::PacketType, errors::RconError};
 
 impl RconClient<TcpStream> {
     pub async fn execute(&mut self, command: &str) -> Result<String, RconError> {
-        for attempt in 0 ..=self.client_config.max_reconnect_attempts {
+        const MAX_BODY_SIZE: usize = 511;
+        
+        if command.len() <= MAX_BODY_SIZE {
+            return self.execute_with_retry(command).await;
+        }
+
+        log::warn!("Command exceeds {} bytes ({}), splitting into {} chunks", 
+            MAX_BODY_SIZE, command.len(), (command.len() + MAX_BODY_SIZE - 1) / MAX_BODY_SIZE);
+
+        let chunks: Vec<&str> = command
+            .as_bytes()
+            .chunks(MAX_BODY_SIZE)
+            .map(|chunk| std::str::from_utf8(chunk).unwrap_or(""))
+            .collect();
+
+        let mut results = Vec::new();
+        for chunk in chunks {
+            results.push(self.execute_with_retry(chunk).await?);
+        }
+        Ok(results.join(""))
+    }
+
+    async fn execute_with_retry(&mut self, command: &str) -> Result<String, RconError> {
+        for attempt in 0..self.client_config.max_reconnect_attempts {
             log::debug!("Executing command with attempt {}/{}", attempt + 1, self.client_config.max_reconnect_attempts);
             match self._execute(command).await {
                 Ok(result) => return Ok(result),
@@ -90,11 +113,16 @@ mod tests {
         let mut client = RconClient::new(client_stream)
             .with_client_config(RconClientConfig {
                 idle_timeout: TIMEOUT,
+                io_timeout: Duration::from_secs(1),
                 ..Default::default()
             });
 
         let server = tokio::spawn(async move {
-            let mut server_client = RconClient::new(server_stream);
+            let mut server_client = RconClient::new(server_stream)
+                .with_client_config(RconClientConfig {
+                    io_timeout: Duration::from_secs(1),
+                    ..Default::default()
+                });
             
             let cmd = server_client.read_packet().await.unwrap();
             assert_eq!(cmd.packet_type, PacketType::ServerDataExecCommand);
@@ -122,11 +150,16 @@ mod tests {
         let mut client = RconClient::new(client_stream)
             .with_client_config(RconClientConfig {
                 idle_timeout: TIMEOUT,
+                io_timeout: Duration::from_secs(1),
                 ..Default::default()
             });
 
         let server = tokio::spawn(async move {
-            let mut server_client = RconClient::new(server_stream);
+            let mut server_client = RconClient::new(server_stream)
+                .with_client_config(RconClientConfig {
+                    io_timeout: Duration::from_secs(1),
+                    ..Default::default()
+                });
             
             let cmd = server_client.read_packet().await.unwrap();
             assert_eq!(cmd.packet_type, PacketType::ServerDataExecCommand);
