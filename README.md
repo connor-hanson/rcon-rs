@@ -110,3 +110,10 @@ rcon-cli --config-name custom_config_profile
 ```
 
 This loads the host and password from your config file, so you don't need to pass `--address` or `--password` flags.
+
+
+#### Troubleshooting
+If the client is behaving unexpectedly, you can prefix `RUST_LOG="DEBUG"` to any command which runs this client
+```bash
+> RUST_LOG="DEBUG" rcon-cli
+```
